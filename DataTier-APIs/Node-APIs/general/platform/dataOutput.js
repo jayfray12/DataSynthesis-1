@@ -4,7 +4,7 @@ const path = require("path");
 const uuid = require('uuid');
 const crypto = require('crypto');
 const config = process.env
-dotenv.config({ path: path.resolve(__dirname, './.env') })
+//dotenv.config({ path: path.resolve(__dirname, './.env') })
 const express = require("express");
 const router = express.Router();
 const buildDataAttributes = require("../../builders/buildDataAttributes");
@@ -18,21 +18,16 @@ module.exports = {
     /*
      *  Method to output data
      */
-    processDataOutput(msg,datastructureName) {
+    processDataOutput(msg,datastructureName,requestGUID) {
         let outputType = config.outputAdapter;
         const dataoutput =[];
         systemOutputName = datastructureName;
-        if (outputType == "kafka") {
-            msg.forEach(msg => {
-                topicOutput(systemOutputName, msg)
-            })
-        }
+
         if (outputType == "kafka-datapersistence") {
             // This is intended to build out specific kafka topic for data
-            msg.forEach(msg => {
-                datapersist.generate_datapersistence_record("datagenerator","datasynthesis",datastructureName,msg)
-                //topicOutput(systemOutputName, msg)
-            })
+            datapersist.generate_datapersistence_record(
+                "datagenerator","datasynthesis", datastructureName,
+                msg, requestGUID)
         }
         if (outputType == "file") {
             /*

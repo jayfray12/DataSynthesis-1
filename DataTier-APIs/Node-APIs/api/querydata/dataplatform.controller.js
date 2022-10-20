@@ -1,8 +1,23 @@
-//const db = require("../../general/connectors/dbConnections/mysqlConnect")
-const dbConnection = require("../../connectivity/general/connectors/dbConnections/postgresqlConnect")
+//const dbConnection = require("../../connectivity/general/connectors/dbConnections/postgresqlConnect")
+const dbConnection = require("../../connectivity/general/connectors/dbConnections/dbGenericConnector")
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
 let rdbmsType = process.env.rdbms;
 
+router.get('/datastructures', function (req, res) {
+    let strQuery ='select datastructurename from platform_config_datastructures where StatusID=1'
+    dbConnection.query('select datastructurename from platform_config_datastructures where StatusID=1', function (error, results, fields) {
+        if (error) throw error;
+        if (results.rows.length > 0)
+        {
+            res.end(JSON.stringify(results.rows));
+            res.status(200).send();
+        }
+        else
+        {
+            res.status(200).send("No Data Returned from Query: " +strQuery);
+        }
+    });
+});
 module.exports = router;
